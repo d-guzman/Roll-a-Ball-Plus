@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Collectible
   - KillPlane
+  - FinishLine
   layers:
   - Default
   - TransparentFX

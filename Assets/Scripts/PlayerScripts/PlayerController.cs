@@ -61,20 +61,25 @@ public class PlayerController : MonoBehaviour {
         }
 
         else if (other.tag == "KillPlane") {
-            // Move the player back to the start of the level, and decrement lives.
             playerLives--;
-            rb.freezeRotation = true;
-            rb.velocity = Vector3.ClampMagnitude(rb.velocity, 0f);
-            transform.position = startingPosition;
-            transform.rotation = Quaternion.Euler(0f,0f,0f);
-            rb.freezeRotation = false;
 
-            // Decrease score upon death.
+            if (playerLives > -1) {
+                rb.freezeRotation = true;
+                rb.velocity = Vector3.ClampMagnitude(rb.velocity, 0f);
+                transform.position = startingPosition;
+                transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+                rb.freezeRotation = false;
+            }
+            
             playerScore -= 250;
-            if (playerScore < 0)
-            {
+            if (playerScore < 0) {
                 playerScore = 0;
             }
+        }
+
+        else if (other.tag == "FinishLine") {
+            string nextScene = other.GetComponent<FinishLineScript>().SceneName;
+            UnityEngine.SceneManagement.SceneManager.LoadScene(nextScene);
         }
     }
 }
