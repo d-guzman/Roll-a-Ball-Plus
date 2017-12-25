@@ -15,6 +15,8 @@ public class PlayerUI : MonoBehaviour {
     private int playerScore;
     private PlayerController playerObj;
 
+    private bool gameIsOver = false;
+
     void Start() {
         playerObj = transform.GetComponent<PlayerController>();
     }
@@ -24,7 +26,24 @@ public class PlayerUI : MonoBehaviour {
         scoreText.text = "Score: " + playerObj.playerScore;
         livesText.text = "Lives: " + playerObj.playerLives;
 
+        // Horribly inefficient. This is always called every frame.
+        if (!gameIsOver) {
+            if (playerObj.gamePaused) {
+                gameOverText.text = "Game Paused.";
+                gameOverText.gameObject.SetActive(true);
+                mainMenuButton.gameObject.SetActive(true);
+                quitGameButton.gameObject.SetActive(true);
+            }
+            else {
+                gameOverText.text = "Game Over!";
+                gameOverText.gameObject.SetActive(false);
+                mainMenuButton.gameObject.SetActive(false);
+                quitGameButton.gameObject.SetActive(false);
+            }
+        }
+
         if (playerObj.playerLives == -1) {
+            gameIsOver = true;
             gameOverText.gameObject.SetActive(true);
             mainMenuButton.gameObject.SetActive(true);
             quitGameButton.gameObject.SetActive(true);

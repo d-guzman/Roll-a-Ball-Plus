@@ -12,6 +12,10 @@ public class GameManager : MonoBehaviour {
 
     private GameObject GM_player = null;
     private PlayerController GM_playerCon = null;
+    [SerializeField]
+    private bool gameStarted = false;
+    [SerializeField]
+    private bool gamePaused = false;
 
     void Awake() {
         if (instance == null) {
@@ -31,6 +35,7 @@ public class GameManager : MonoBehaviour {
         if (instance == this) {                                                // as i understand it, if this gm is the original instance, run code.
             if (scene.buildIndex != 0)
             {
+                if (!gameStarted) { gameStarted = true; }
                 GM_player = GameObject.FindGameObjectWithTag("Player");        // Find the player in the scene.
                 GM_playerCon = GM_player.GetComponent<PlayerController>();     // Get the PlayerController script from the player in the scene.
 
@@ -39,6 +44,7 @@ public class GameManager : MonoBehaviour {
             }
             else if (scene.buildIndex == 0)
             {
+                if (gameStarted) { gameStarted = false; }
                 GM_playerScore = 0;                                            // Reset values if the player goes back to main menu.
                 GM_playerLives = 3;
                 GM_player = null;
@@ -48,9 +54,30 @@ public class GameManager : MonoBehaviour {
     }
 
     void Update() {
-        if (GM_playerCon != null) {
+        pauseGame();
+        updateScore();
+    }
+
+    private void updateScore() {
+        if (GM_playerCon != null)
+        {
             GM_playerScore = GM_playerCon.playerScore;                     // Update Score and Lives as the player plays.
             GM_playerLives = GM_playerCon.playerLives;
         }
+    }
+
+    private void pauseGame() {
+        if (gameStarted)
+            if (Input.GetButtonDown("StartButton") == true) {
+                if (!gamePaused) {
+                    gamePaused = true;
+                    GM_playerCon.onPausePressed();
+                }
+                else if (gamePaused) {
+                    gamePaused = false;
+                    GM_playerCon.onPausePressed();
+                    Debug.Log("Resume Game.");
+                }
+            }
     }
 }

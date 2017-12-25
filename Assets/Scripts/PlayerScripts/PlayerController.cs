@@ -21,6 +21,9 @@ public class PlayerController : MonoBehaviour {
     private Rigidbody rb;
     private Vector3 startingPosition;
 
+    public bool gamePaused = false;
+    private Vector3 savedMovement;
+
     void Start () {
         rb = gameObject.GetComponent<Rigidbody>();
         startingPosition = transform.position;
@@ -31,10 +34,25 @@ public class PlayerController : MonoBehaviour {
         moveHori = Input.GetAxis("Horizontal");
         moveVert = Input.GetAxis("Vertical");
 
-        move(moveHori, moveVert);
+        if (!gamePaused) { move(moveHori, moveVert); }
 	}
     //Public Functions
-
+    public void onPausePressed() {
+        if (!gamePaused)
+        {
+            gamePaused = true;
+            savedMovement = rb.velocity;
+            rb.freezeRotation = true;
+            rb.useGravity = false;
+            rb.velocity = Vector3.ClampMagnitude(rb.velocity, 0f);
+        }
+        else if (gamePaused) {
+            gamePaused = false;
+            rb.freezeRotation = false;
+            rb.useGravity = true;
+            rb.velocity = savedMovement;
+        }
+    }
     
     //Private Functions
     private void move(float moveHori, float moveVert) {
@@ -54,6 +72,7 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
+    //Other Unity Function Stuff.
     void OnTriggerEnter(Collider other) {
         if (other.tag == "Collectible") {
             playerScore += 100;
